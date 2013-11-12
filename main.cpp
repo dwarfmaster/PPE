@@ -10,9 +10,9 @@
 
 int main(int, char**)
 {
-	CvCapture* c1 = cvCaptureFromCAM(1);
+	CvCapture* c1 = cvCaptureFromCAM(0);
 	cvNamedWindow("Capture1", CV_WINDOW_AUTOSIZE);
-	CvCapture* c2 = cvCaptureFromCAM(2);
+	CvCapture* c2 = cvCaptureFromCAM(1);
     cvNamedWindow("Capture2", CV_WINDOW_AUTOSIZE);
 
     CvSize size;
@@ -30,7 +30,7 @@ int main(int, char**)
 
 		printf("PRESS SPACE TO QUIT \n\n");
         int nb = 0;
-        const int max = 16;
+        const int max = 8;
 
 		while(1)
 		{

@@ -8,8 +8,11 @@
 
 namespace libcv
 {
+    class Compute;
+
     class CalibCam
     {
+        friend Compute;
         public:
             CalibCam();
             CalibCam(const CalibCam&) = delete;

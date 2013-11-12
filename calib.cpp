@@ -3,6 +3,7 @@
 #include "cv.h"
 #include "cxmisc.h"
 #include "highgui.h"
+#include <fstream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -31,8 +32,25 @@ namespace libcv
 
     bool CalibCam::load(const std::string& path)
     {
-        /* TODO */
-        return path.empty();
+        std::string used;
+        used = path + "/mx1.xml";
+        m_mx1 = (CvMat*)cvLoad(used.c_str());
+        used = path + "/mx2.xml";
+        m_mx2 = (CvMat*)cvLoad(used.c_str());
+        used = path + "/my1.xml";
+        m_my1 = (CvMat*)cvLoad(used.c_str());
+        used = path + "/my2.xml";
+        m_my2 = (CvMat*)cvLoad(used.c_str());
+
+        used = path + "/size";
+        std::ifstream ifs(used.c_str());
+        if(!ifs) {
+            std::cout << "Couldn't load !" << std::endl;
+            return false;
+        }
+        ifs >> m_imgSize.width >> m_imgSize.height;
+        std::cout << "Size loaded : " << m_imgSize.width << "x" << m_imgSize.height << std::endl;
+        return true;
     }
 
     bool CalibCam::save(const std::string& path) const
@@ -46,8 +64,15 @@ namespace libcv
         cvSave(used.c_str(), m_my1, "my1");
         used = path + "/my2.xml";
         cvSave(used.c_str(), m_my2, "my2");
+        used = path + "/size";
+        std::ofstream ofs(used.c_str());
+        if(!ofs) {
+            std::cout << "Couldn't save !" << std::endl;
+            return false;
+        }
+        ofs << m_imgSize.width << " " << m_imgSize.height << std::endl;
+        std::cout << "Size saved : " << m_imgSize.width << "x" << m_imgSize.height << std::endl;
 
-        /* TODO find if it was really writted */
         return true;
     }
 
