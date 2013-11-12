@@ -1,7 +1,13 @@
 PROG=testcv.prog
 CXXFLAGS=-Wall -Wextra -pedantic -std=c++11 `pkg-config --cflags opencv`
 LDFLAGS=`pkg-config --libs opencv`
-OBJS=main.o calib.o
+OBJS=calib.o compute.o
+CALIB="no"
+ifeq ($(CALIB),"yes")
+	OBJS+= main.o
+else
+	OBJS+= main2.o
+endif
 
 all : $(PROG)
 
