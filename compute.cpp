@@ -26,33 +26,27 @@ namespace libcv
 
     void Compute::process(IplImage* left, IplImage* right)
     {
-        static CvMat* vdisp = NULL;
-        if(vdisp)
-            cvReleaseMat(&vdisp);
-
         /* Creating the necessary matrixs */
-        CvMat* img1  = cvCreateMat(m_size.height, m_size.width, CV_8U);
-        CvMat* img2  = cvCreateMat(m_size.height, m_size.width, CV_8U);
         CvMat* img1r = cvCreateMat(m_size.height, m_size.width, CV_8U);
         CvMat* img2r = cvCreateMat(m_size.height, m_size.width, CV_8U);
         CvMat* disp  = cvCreateMat(m_size.height, m_size.width, CV_16S);
-        vdisp = cvCreateMat(m_size.height, m_size.width, CV_8U);
+        CvMat* vdisp = cvCreateMat(m_size.height, m_size.width, CV_8U);
 
         /* Create the bm state for finding stereo correspondances */
         CvStereoBMState* BMState = cvCreateStereoBMState();
-        BMState->preFilterSize       = 5;
-        BMState->preFilterCap        = 63;
-        BMState->SADWindowSize       = 21;
-        BMState->minDisparity        = 0;
-        BMState->numberOfDisparities = 64;
-        BMState->textureThreshold    = 0;
-        BMState->uniquenessRatio     = 0;
+        BMState->preFilterSize       = 41;
+        BMState->preFilterCap        = 31;
+        BMState->SADWindowSize       = 41;
+        BMState->minDisparity        = -64;
+        BMState->numberOfDisparities = 128;
+        BMState->textureThreshold    = 10;
+        BMState->uniquenessRatio     = 15;
 
         /* Stereo correspondance */
-        cvCvtColor(left,  img1, CV_BGR2GRAY);
-        cvCvtColor(right, img2, CV_BGR2GRAY);
-        cvRemap(img1, img1r, m_x1, m_y1);
-        cvRemap(img2, img2r, m_x2, m_y2);
+        cvRemap(left,  img1r, m_x1, m_y1);
+        cvShowImage("Left", img1r);
+        cvRemap(right, img2r, m_x2, m_y2);
+        cvShowImage("Right", img2r);
         cvFindStereoCorrespondenceBM(img1r, img2r, disp,
                 BMState);
         cvNormalize(disp, vdisp, 0, 256, CV_MINMAX);
@@ -66,6 +60,7 @@ namespace libcv
         cvReleaseMat(&img1r);
         cvReleaseMat(&img2r);
         cvReleaseMat(&disp);
+        cvReleaseMat(&vdisp);
     }
 
 }
