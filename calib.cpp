@@ -98,12 +98,14 @@ namespace libcv
     void CalibCam::end()
     {
         size_t nframes = m_frames;
+        if(nframes == 0)
+            return;
         int n = m_nx * m_ny;
         std::vector<CvPoint3D32f> objectPoints(nframes * m_nx * m_ny);
 
         /* Store normal coordinates of corners into the objectPoints list */
-        for(int i = 0; i < m_ny; ++i) {
-            for(int j = 0; j < m_nx; ++j)
+        for(int i = 0; i < m_nx; ++i) {
+            for(int j = 0; j < m_ny; ++j)
                 objectPoints[i*m_nx + j] = cvPoint3D32f(i * m_size, j * m_size, 0);
         }
         for(size_t i = 0; i < nframes; ++i)
@@ -167,8 +169,8 @@ namespace libcv
 
     bool CalibCam::compute(IplImage* i1, IplImage* i2)
     {
-        std::vector<CvPoint2D32f> ret1 = computeOne(i1, "Capture1");
-        std::vector<CvPoint2D32f> ret2 = computeOne(i2, "Capture2");
+        std::vector<CvPoint2D32f> ret1 = computeOne(i1, "Left");
+        std::vector<CvPoint2D32f> ret2 = computeOne(i2, "Right");
         if(ret1.empty() || ret2.empty())
             return false;
 
@@ -196,13 +198,10 @@ namespace libcv
             return temp;
         }
 
-        IplImage* cimg = cvCreateImage(m_imgSize, 8, 1);
-        cvCvtColor(img, cimg, CV_BGR2GRAY);
-        cvFindCornerSubPix(cimg, &temp[0], count,
+        cvFindCornerSubPix(img, &temp[0], count,
                 cvSize(11, 11), cvSize(-1, -1),
                 cvTermCriteria(CV_TERMCRIT_ITER + CV_TERMCRIT_EPS,
                     30, 0.01));
-        cvReleaseImage(&cimg);
 
         if(m_display) {
             cvDrawChessboardCorners(img, cvSize(m_nx, m_ny), &temp[0],
