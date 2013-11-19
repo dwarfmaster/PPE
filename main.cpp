@@ -7,56 +7,45 @@
 #include <opencv/cvaux.h>
 #include <opencv/highgui.h>
 #include "calib.hpp"
+#include "cameras.hpp"
 
 int main(int, char**)
 {
-	CvCapture* c1 = cvCaptureFromCAM(0);
-	cvNamedWindow("Capture1", CV_WINDOW_AUTOSIZE);
-	CvCapture* c2 = cvCaptureFromCAM(1);
-    cvNamedWindow("Capture2", CV_WINDOW_AUTOSIZE);
+    libcv::Cameras cams(1, 2);
+    cvNamedWindow("Left",  CV_WINDOW_AUTOSIZE);
+    cvNamedWindow("Right", CV_WINDOW_AUTOSIZE);
+    std::cout << "Capturing using a " << cams.size().width << "x" << cams.size().height << " webcam." << std::endl;
 
-    CvSize size;
-    size.width  = cvGetCaptureProperty(c1, CV_CAP_PROP_FRAME_WIDTH);
-    size.height = cvGetCaptureProperty(c1, CV_CAP_PROP_FRAME_HEIGHT);
-    std::cout << "Capturing using a " << size.width << "x" << size.height << " webcam." << std::endl;
+    libcv::CalibCam cc;
+    cc.start(9, 6, 2.5, cams.size());
+    std::cout << "CalibCam started" << std::endl;
 
-	if(c1 && c2)
-	{
-		IplImage* f1 = cvQueryFrame(c1);
-        IplImage* f2 = cvQueryFrame(c2);
-        libcv::CalibCam cc;
-        cc.start(9, 6, 2.5, size);
-        std::cout << "CalibCam started" << std::endl;
+    printf("PRESS SPACE TO QUIT \n\n");
+    int nb = 0;
+    const int max = 16;
 
-		printf("PRESS SPACE TO QUIT \n\n");
-        int nb = 0;
-        const int max = 8;
+    while(1)
+    {
+        if(!cams.queryFrames())
+            throw libcv::CamException("Couldn't query frames.");
+        std::cout << "New frame." << std::endl;
 
-		while(1)
-		{
-			f1 = cvQueryFrame(c1);
-			cvShowImage("Capture1",f1);
-            f2 = cvQueryFrame(c2);
-			cvShowImage("Capture2",f2);
-
-            if(cc.compute(f1, f2)) {
-                ++nb;
-                std::cout << "Found a chessboard : " << nb << "/" << max << "." << std::endl;
-                if(nb >= max)
-                    break;
-            }
-
-            char c = cvWaitKey(1000);
-            if(c == ' ')
+        if(cc.compute(cams.left(), cams.right())) {
+            ++nb;
+            std::cout << "Found a chessboard : " << nb << "/" << max << "." << std::endl;
+            if(nb >= max)
                 break;
-		}
-        cc.end();
-        cc.save("save/");
-	}
-	else printf("Video stream not found\n\n");
+        }
 
-	printf("Appuyez sur une touche ...\n");
-	cvWaitKey(0);
+        char c = cvWaitKey(1000);
+        if(c == ' ')
+            break;
+    }
+    cc.end();
+    cc.save("save/");
+
+    printf("Appuyez sur une touche ...\n");
+    cvWaitKey(0);
     return 0;
 }
 
