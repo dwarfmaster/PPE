@@ -30,6 +30,8 @@ int main(int, char**)
             throw libcv::CamException("Couldn't query frames.");
         std::cout << "New frame." << std::endl;
 
+        cvShowImage("Left",  cams.left());
+        cvShowImage("Right", cams.right());
         if(cc.compute(cams.left(), cams.right())) {
             ++nb;
             std::cout << "Found a chessboard : " << nb << "/" << max << "." << std::endl;
