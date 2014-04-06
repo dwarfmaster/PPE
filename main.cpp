@@ -7,6 +7,8 @@
 #include <opencv/highgui.h>
 #include "cameras.hpp"
 #include "abod.hpp"
+#include "follower.hpp"
+#include "serial.hpp"
 
 int main(int, char**)
 {
@@ -16,16 +18,20 @@ int main(int, char**)
     Abod abod;
     if(!abod.load("ground"))
         return 1;
+    Follower follow;
+    Serial serial;
+    if(!serial.open())
+        return 1;
+
+    char buffer[4096];
+    int size;
 
     cv::Mat img;
     while(1)
     {
-        cams.queryFrames();
-        img = cams.get();
-        abod.compute(img, true);
-
-        while((char)cvWaitKey(0) != ' ');
+        /* TODO */
     }
+
     return 0;
 }
 
