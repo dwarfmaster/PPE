@@ -103,24 +103,24 @@ namespace libcv
         int n = m_nx * m_ny;
         std::vector<CvPoint3D32f> objectPoints(nframes * m_nx * m_ny);
 
-        /* Store normal coordinates of corners into the objectPoints list */
-        for(int i = 0; i < m_nx; ++i) {
-            for(int j = 0; j < m_ny; ++j)
+        /* Store normal coordinates of corners into the objec tPoints list */
+        for(int i = 0; i < m_ny; ++i) {
+            for(int j = 0; j < m_nx; ++j)
                 objectPoints[i*m_nx + j] = cvPoint3D32f(i * m_size, j * m_size, 0);
         }
-        for(size_t i = 0; i < nframes; ++i)
+        for(size_t i = 1; i < nframes; ++i)
             std::copy(objectPoints.begin(), objectPoints.begin() + n, objectPoints.begin() + i*n);
 
         /* Prepare some matrix */
         std::vector<int> npoints(nframes, n);
         int N = nframes * n;
-        CvMat _objPoints  = cvMat(1, N, CV_32FC3, &objectPoints[0]);
-        CvMat _imgPoints1 = cvMat(1, N, CV_32FC2, &m_corners[0][0]);
-        CvMat _imgPoints2 = cvMat(1, N, CV_32FC2, &m_corners[1][0]);
-        CvMat _npoints    = cvMat(1, npoints.size(), CV_32S, &npoints[0]);
+        CvMat _objPoints  = cvMat(1, N,       CV_32FC3, &objectPoints[0]);
+        CvMat _imgPoints1 = cvMat(1, N,       CV_32FC2, &m_corners[0][0]);
+        CvMat _imgPoints2 = cvMat(1, N,       CV_32FC2, &m_corners[1][0]);
+        CvMat _npoints    = cvMat(1, nframes, CV_32S, &npoints[0]);
 
-        double M1[3][3], M2[3][3], D1[5], D2[5];
-        double R[3][2], T[3], E[3][3], F[3][3];
+        double M1[3][3], M2[3][3], D1[5],   D2[5];
+        double R[3][2],  T[3],     E[3][3], F[3][3];
         double Q[4][4];
         CvMat _M1 = cvMat(3, 3, CV_64F, M1);
         CvMat _M2 = cvMat(3, 3, CV_64F, M2);
@@ -193,7 +193,7 @@ namespace libcv
                 &temp[0], &count,
                 CV_CALIB_CB_ADAPTIVE_THRESH |
                 CV_CALIB_CB_NORMALIZE_IMAGE);
-        if(!result) {
+        if(!result || count != m_nx*m_ny) {
             temp.clear();
             return temp;
         }
