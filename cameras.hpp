@@ -21,12 +21,12 @@ namespace libcv
             /* To call once in each iteration of main loop */
             bool queryFrames();
             /* Get the pictures (return mustn't be free'd */
-            IplImage* get() const;
-            CvSize size() const;
+            cv::Mat get() const;
+            cv::Size size() const;
 
         private:
-            CvCapture* m_cpt;
-            IplImage* m_img;
+            cv::VideoCapture m_cpt;
+            cv::Mat m_img;
             CvSize m_size;
             int m_loops;
     };
