@@ -49,9 +49,6 @@ void Abod::addGround(const cv::Mat& pict)
     /* Debug plot */
     Mat splitted[3];
     split(used, splitted);
-    imshow("Hue",        splitted[0]);
-    imshow("Saturation", splitted[1]);
-    imshow("Value",      splitted[2]);
 
     Point hpt(0,0);
     Point vpt(0,0);
@@ -66,7 +63,6 @@ void Abod::addGround(const cv::Mat& pict)
         line(used, vpt, npt, Scalar(0,255,0), 3);
         vpt = npt;
     }
-    imshow("Hists HSV", used);
 
     /* Store them. */
     if(m_shist.empty())
@@ -189,7 +185,6 @@ void Abod::compute(const cv::Mat& pict, bool sav)
                 result.at<unsigned char>(i,j) = 255;
         }
     }
-    imshow("Result", result);
     computeDists(result);
 
     if(sav) {
@@ -244,7 +239,6 @@ void Abod::computeDists(const cv::Mat& bw)
             else
                 drawContours(drawn, contours, j, Scalar(0,255,0), 2, 8, hierarchy, 0, Point());
         }
-        imshow("Contours", drawn);
         contours.clear();
         m_dists[i] = min;
     }

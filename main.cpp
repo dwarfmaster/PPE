@@ -17,11 +17,11 @@ int main(int, char**)
     if(!abod.load("ground"))
         return 1;
 
+    cv::Mat img;
     while(1)
     {
         cams.queryFrames();
-        cv::Mat img = cams.get();
-        imshow("Loaded", img);
+        img = cams.get();
         abod.compute(img, true);
 
         while((char)cvWaitKey(0) != ' ');
