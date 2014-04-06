@@ -139,6 +139,12 @@ bool Abod::save(const std::string& path)
 bool Abod::load(const std::string& path)
 {
     FileStorage fs(path, FileStorage::READ);
+    if(!fs.isOpened())
+        return false;
+    if(fs["sat"].isNone() || fs["hue"].isNone()
+            || fs["sth"].isNone() || fs["hth"].isNone())
+        return false;
+
     fs["sat"] >> m_shist;
     fs["hue"] >> m_hhist;
     fs["sth"] >> m_sthresh;
