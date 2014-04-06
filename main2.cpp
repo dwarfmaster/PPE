@@ -6,8 +6,6 @@
 #include <opencv/cv.h>
 #include <opencv/cvaux.h>
 #include <opencv/highgui.h>
-#include "calib.hpp"
-#include "compute.hpp"
 #include "cameras.hpp"
 
 int main(int, char**)
@@ -17,26 +15,11 @@ int main(int, char**)
     cvNamedWindow("Right", CV_WINDOW_AUTOSIZE);
     std::cout << "Capturing using a " << cams.size().width << "x" << cams.size().height << " webcam." << std::endl;
 
-    libcv::CalibCam cc;
-    cc.load("save");
-    libcv::Compute cpt(&cc);
-
-    printf("PRESS SPACE TO QUIT \n\n");
-
     while(1)
     {
         cams.queryFrames();
-        cvShowImage("Left",  cams.left());
-        cvShowImage("Right", cams.right());
-        cpt.process(cams.left(), cams.right());
-
-        char c = cvWaitKey(1000);
-        if(c == ' ')
-            break;
+        /* TODO */
     }
-
-    printf("Appuyez sur une touche ...\n");
-    cvWaitKey(0);
     return 0;
 }
 
