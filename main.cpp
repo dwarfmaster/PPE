@@ -29,7 +29,27 @@ int main(int, char**)
     cv::Mat img;
     while(1)
     {
-        /* TODO */
+        /* Getting and processing video stream. */
+        cams.queryFrames();
+        cv::Mat fr = cams.get();
+        follow.process(fr);
+        abod.compute(fr);
+
+        /* Following. */
+        switch(follow.pos()) {
+            case Follower::Left:
+                serial.write(0x50);
+                break;
+            case Follower::Right:
+                serial.write(0x51);
+                break;
+            case Follower::Center:
+                serial.write(0x52);
+                break;
+            default:
+                serial.write(0x53);
+                break;
+        }
     }
 
     return 0;
