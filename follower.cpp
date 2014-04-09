@@ -31,6 +31,34 @@ void Follower::process(const cv::Mat& img)
         }
     }
     imshow("Binary", binary);
+
+    /* Getting contours. */
+    std::vector<std::vector<Point>> contours;
+    std::vector<Vec4i> hierarchy;
+    findContours(binary, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, Point(0,0));
+
+    /* Find center of biggest. */
+    double maxArea = 0.0f;
+    Point center;
+    for(std::vector<Point> ctr : contours) {
+        double area = contourArea(ctr);
+        if(area > maxArea) {
+            maxArea = area;
+            Rect r = boundingRect(ctr);
+            center.x = r.x + r.width / 2;
+            center.y = r.y + r.height / 2;
+        }
+    }
+
+    /* Set status depending on center. */
+    if(maxArea < 100)
+        m_st = Unknown;
+    else if(center.x < img.size().width / 3)
+        m_st = Left;
+    else if(center.x < 2*img.size().width / 3)
+        m_st = Center;
+    else
+        m_st = Right;
 }
 
 const char* Follower::status() const
