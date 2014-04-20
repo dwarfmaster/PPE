@@ -1,11 +1,11 @@
 #include "follower.hpp"
 using namespace cv;
 
-const unsigned char minHue = 0;
-const unsigned char maxHue = 255;
-const unsigned char minSat = 0;
+const unsigned char minHue = 12;
+const unsigned char maxHue = 37;
+const unsigned char minSat = 60;
 const unsigned char maxSat = 255;
-const unsigned char minVal = 0;
+const unsigned char minVal = 60;
 const unsigned char maxVal = 255;
 
 Follower::Follower()
