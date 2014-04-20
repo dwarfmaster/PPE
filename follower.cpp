@@ -1,11 +1,11 @@
 #include "follower.hpp"
 using namespace cv;
 
-const unsigned char minHue = 12;
-const unsigned char maxHue = 37;
-const unsigned char minSat = 60;
+const unsigned char minHue = 75;
+const unsigned char maxHue = 114;
+const unsigned char minSat = 0;
 const unsigned char maxSat = 255;
-const unsigned char minVal = 60;
+const unsigned char minVal = 0;
 const unsigned char maxVal = 255;
 
 Follower::Follower()
@@ -17,20 +17,22 @@ Follower::~Follower()
 
 void Follower::process(const cv::Mat& img)
 {
+    Mat hsv;
+    cvtColor(img, hsv, CV_BGR2HSV);
+
     Mat binary(img.size(), CV_8UC1);
     /* Creating the binary picture. */
-    for(int i = 0; i < img.rows; ++i) {
-        for(int j = 0; j < img.cols; ++j) {
-            auto vec = img.at<Vec<unsigned char,3>>(i,j);
+    for(int i = 0; i < hsv.rows; ++i) {
+        for(int j = 0; j < hsv.cols; ++j) {
+            auto vec = hsv.at<Vec<unsigned char,3>>(i,j);
             if(vec[0] >= minHue && vec[0] <= maxHue
                     && vec[1] >= minSat && vec[1] <= maxSat
-                    && vec[2] >= minVal && vec[2] <= minVal)
+                    && vec[2] >= minVal && vec[2] <= maxVal)
                 binary.at<unsigned char>(i,j) = 255;
             else
                 binary.at<unsigned char>(i,j) = 0;
         }
     }
-    imshow("Binary", binary);
 
     /* Getting contours. */
     std::vector<std::vector<Point>> contours;
@@ -49,6 +51,13 @@ void Follower::process(const cv::Mat& img)
             center.y = r.y + r.height / 2;
         }
     }
+
+    Mat todraw;
+    cvtColor(binary, todraw, CV_GRAY2BGR);
+    if(maxArea >= 100)
+        circle(todraw, center, 5, Scalar(0,0,255), 3);
+    imshow("Result", todraw);
+    waitKey(10);
 
     /* Set status depending on center. */
     if(maxArea < 100)
