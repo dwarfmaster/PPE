@@ -38,17 +38,24 @@ int main(int, char**)
         /* Following. */
         switch(follow.pos()) {
             case Follower::Left:
-                serial.write(0x50);
+                //serial.write(0x50);
                 break;
             case Follower::Right:
-                serial.write(0x51);
+                //serial.write(0x51);
                 break;
             case Follower::Center:
-                serial.write(0x52);
+                //serial.write(0x52);
                 break;
             default:
                 serial.write(0x53);
                 break;
+        }
+
+        /* Getting data from android. */
+        size = serial.read(buffer, 4096);
+        if(size > 0) {
+            for(int i = 0; i < size; ++i)
+                std::cout << "Received order " << std::hex << (int)buffer[i] << std::endl;
         }
     }
 
