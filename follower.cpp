@@ -1,11 +1,11 @@
 #include "follower.hpp"
 using namespace cv;
 
-const unsigned char minHue = 75;
-const unsigned char maxHue = 114;
-const unsigned char minSat = 0;
+const unsigned char minHue = 13;
+const unsigned char maxHue = 27;
+const unsigned char minSat = 142;
 const unsigned char maxSat = 255;
-const unsigned char minVal = 0;
+const unsigned char minVal = 147;
 const unsigned char maxVal = 255;
 
 Follower::Follower()
@@ -33,6 +33,7 @@ void Follower::process(const cv::Mat& img)
                 binary.at<unsigned char>(i,j) = 0;
         }
     }
+    imshow("Binary", binary);
 
     /* Getting contours. */
     std::vector<std::vector<Point>> contours;
